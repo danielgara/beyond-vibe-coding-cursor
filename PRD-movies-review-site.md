@@ -11,13 +11,13 @@
 
 ### 1.1 Product Summary
 
-A **Movies Review Site** is a single-page web application where users can browse movie information and submit reviews. The app is built with **Vue.js** and uses a **JSON file as the sample database** for movies and reviews data.
+A **Movies Review Site** is a single-page web application where users can browse movie information and submit reviews. The app is built with **Vue.js** and uses **SQLite** as the database for movies and reviews data.
 
 ### 1.2 Goals
 
 - Let users **view main movie information** (title, year, genre, description, poster, rating, etc.).
 - Let users **leave and read reviews** for each movie.
-- Provide a simple, fast, client-side experience with Vue.js and a JSON-backed data layer (no backend server required for the sample).
+- Provide a simple, fast experience with Vue.js on the frontend and a small backend that uses SQLite for persistent storage.
 
 ### 1.3 Target Users
 
@@ -32,7 +32,7 @@ A **Movies Review Site** is a single-page web application where users can browse
 
 | Requirement | Description |
 |-------------|-------------|
-| **Movie list** | Display a list/grid of movies (e.g. from `movies.json` or a combined data file). |
+| **Movie list** | Display a list/grid of movies loaded from the SQLite database. |
 | **Movie detail** | On click/route, show full details: title, release year, genre(s), description/synopsis, poster image URL, average rating (if derived from reviews). |
 | **Search / filter** | Optional: filter or search movies by title, genre, or year. |
 
@@ -41,13 +41,12 @@ A **Movies Review Site** is a single-page web application where users can browse
 | Requirement | Description |
 |-------------|-------------|
 | **Read reviews** | On a movie’s detail page, show all reviews for that movie (author name or “Anonymous”, rating, text, date). |
-| **Leave a review** | Form to submit: author name (or anonymous), star rating (e.g. 1–5), review text. New reviews are stored in the JSON “database” (file or in-memory structure) and reflected in the UI. |
+| **Leave a review** | Form to submit: author name (or anonymous), star rating (e.g. 1–5), review text. New reviews are stored in the SQLite “database” and reflected in the UI. |
 | **Validation** | Require at least: rating and non-empty review text; optionally author. |
 
 ### 2.3 Out of Scope (for this PRD)
 
 - User accounts, login, or authentication.
-- Backend API or real database (this version uses JSON only).
 - Moderation, editing, or deleting reviews (can be added later).
 
 ---
@@ -59,77 +58,52 @@ A **Movies Review Site** is a single-page web application where users can browse
 | **Frontend framework** | Vue.js 3 (Composition API recommended) |
 | **Build / dev** | Vite (recommended) or Vue CLI |
 | **Routing** | Vue Router (for movie list vs movie detail pages) |
-| **State / data** | Vue reactivity; data loaded from JSON (fetch/import). For persistence, either rewrite JSON via a simple local API or use `localStorage` and merge with static JSON at runtime. |
-| **Database (sample)** | JSON file(s), e.g. `data/movies.json`, `data/reviews.json` (or one combined file). |
+| **State / data** | Vue reactivity; data loaded from backend API (REST or similar). Backend reads/writes SQLite. |
+| **Backend** | Small Node.js server (e.g. Express, Fastify) or similar; required to access SQLite from the browser. |
+| **Database** | SQLite (single file, e.g. `data/movies.db`). Use a driver such as `better-sqlite3` or `sql.js` (in-browser) depending on architecture. |
 | **Styling** | CSS/SCSS or a utility framework (e.g. Tailwind) — optional. |
 
 ---
 
-## 4. Data Model (JSON Database)
+## 4. Data Model (SQLite Database)
 
-### 4.1 File Structure (sample)
+### 4.1 Database File
 
-Place under `public/` or `src/assets/` (or `data/`), e.g.:
+- Single SQLite file, e.g. `data/movies.db` (or `db/movies.db`), created and updated by the backend.
+- The Vue frontend never touches SQLite directly; all reads/writes go through a backend API that executes SQL against this file.
 
-- `public/data/movies.json` — list of movies.
-- `public/data/reviews.json` — list of reviews, each linked to a movie by `movieId`.
+### 4.2 Movies Table
 
-Alternatively, one file: `public/data/db.json` with `movies` and `reviews` arrays.
+| Column        | Type          | Description                    |
+|---------------|---------------|--------------------------------|
+| `id`          | INTEGER PK    | Auto-increment or explicit ID  |
+| `title`       | TEXT NOT NULL | Movie title                    |
+| `year`        | INTEGER       | Release year                   |
+| `genres`      | TEXT          | Comma-separated or JSON array  |
+| `description` | TEXT          | Synopsis                       |
+| `poster_url`  | TEXT          | Poster image URL               |
+| `duration`    | INTEGER       | Runtime in minutes             |
 
-### 4.2 Movies Schema
+### 4.3 Reviews Table
 
-```json
-{
-  "movies": [
-    {
-      "id": "movie-1",
-      "title": "Inception",
-      "year": 2010,
-      "genres": ["Sci-Fi", "Thriller"],
-      "description": "A thief who steals corporate secrets through dream-sharing technology is offered a chance to have his criminal record erased.",
-      "posterUrl": "https://example.com/posters/inception.jpg",
-      "duration": 148
-    }
-  ]
-}
-```
+| Column        | Type          | Description                    |
+|---------------|---------------|--------------------------------|
+| `id`          | INTEGER PK    | Auto-increment                 |
+| `movie_id`    | INTEGER FK    | References `movies.id`         |
+| `author_name` | TEXT          | Optional; default "Anonymous"  |
+| `rating`      | INTEGER       | 1–5, CHECK constraint          |
+| `text`        | TEXT NOT NULL | Review body                    |
+| `created_at`  | TEXT/DATETIME | ISO 8601 or SQLite datetime    |
 
-- `id`: unique string (e.g. `movie-1`).
-- `title`, `year`, `genres`, `description`, `posterUrl`, `duration`: main movie information.
+- **Foreign key:** `reviews.movie_id` → `movies.id` (ON DELETE CASCADE optional).
 
-### 4.3 Reviews Schema
-
-```json
-{
-  "reviews": [
-    {
-      "id": "review-1",
-      "movieId": "movie-1",
-      "authorName": "Jane D.",
-      "rating": 5,
-      "text": "Mind-bending and visually stunning.",
-      "createdAt": "2025-03-01T12:00:00Z"
-    }
-  ]
-}
-```
-
-- `id`: unique string.
-- `movieId`: references `movies[].id`.
 - `authorName`: string (optional; can be “Anonymous”).
-- `rating`: number 1–5.
-- `text`: string (required).
-- `createdAt`: ISO 8601 date string.
 
-### 4.4 Persistence Strategy (sample app)
+### 4.4 Persistence Strategy
 
-- **Read:** On load, fetch `movies.json` and `reviews.json` (or `db.json`) and store in Vue state (e.g. `ref`/`reactive` or Pinia).
-- **Write (leave review):**  
-  - **Option A:** In a purely static setup, new reviews live only in memory/localStorage; page refresh loses them unless you rehydrate from localStorage.  
-  - **Option B:** Use a minimal local backend (e.g. Node/Express) that reads/writes the same JSON file so reviews persist on disk.  
-  - **Option C:** Use **JSON Server** or similar to mock a REST API that reads/writes the JSON file.
-
-PRD recommends defining the JSON schema and one sample `movies.json` + `reviews.json` (or `db.json`) so the Vue app can run against it; persistence method can be chosen in implementation.
+- **Backend:** A small Node.js (or other) server exposes REST endpoints, e.g. `GET /api/movies`, `GET /api/movies/:id`, `GET /api/movies/:id/reviews`, `POST /api/movies/:id/reviews`. It uses a SQLite driver (e.g. `better-sqlite3`, `node-sqlite3`) to read and write `movies.db`.
+- **Frontend:** Vue app fetches from these endpoints and submits new reviews via `POST`; persistence is automatic in SQLite.
+- **Schema and seed:** Provide a schema script (e.g. `schema.sql`) and optional seed script or seed data so the sample database can be recreated with initial movies and reviews.
 
 ---
 
