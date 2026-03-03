@@ -2,7 +2,7 @@
 
 **Source:** [PRD-movies-review-site.md](./PRD-movies-review-site.md)  
 **Goal:** Implement in small, manageable increments suitable for AI-assisted development.  
-**Stack:** Vue.js 3 (Vite) + Node.js backend + SQLite.
+**Stack:** Vue.js 3 (Vite) only — **frontend-only**, **localStorage** for data (no backend).
 
 ---
 
@@ -15,80 +15,66 @@
 
 ---
 
-## Phase 1: Project Setup & Database
+## Phase 1: Project Setup & Seed Data
 
 | Done | Task | Notes / AI prompt hint |
 |------|------|------------------------|
-| [ ] | **1.1** Create project root and decide structure (e.g. `frontend/` and `backend/` or `client/` and `server/`). | "Set up folder structure for a Vue frontend and Node backend in this repo." |
-| [ ] | **1.2** Scaffold Vue 3 app with Vite in the frontend folder. Use Composition API. | "Create a new Vue 3 + Vite project in ./frontend using npm create vite." |
-| [ ] | **1.3** Add Vue Router to the Vue app; define routes `/` (movie list) and `/movies/:id` (movie detail). | "Add Vue Router with two routes: home and /movies/:id." |
-| [ ] | **1.4** Create backend folder and initialize a Node.js project (e.g. Express or Fastify). Add `better-sqlite3` (or chosen SQLite driver). | "Initialize Express (or Fastify) in ./backend and add better-sqlite3." |
-| [ ] | **1.5** Add `schema.sql`: create `movies` table (id, title, year, genres, description, poster_url, duration) and `reviews` table (id, movie_id FK, author_name, rating, text, created_at) with CHECK(rating between 1 and 5). | "Write schema.sql for movies and reviews per PRD section 4." |
-| [ ] | **1.6** Add a seed script or `seed.sql` that inserts 3–5 sample movies and a few reviews. Match PRD sample data (e.g. Inception, Shawshank, Parasite). | "Create seed data for movies and reviews matching the PRD sample." |
-| [ ] | **1.7** Add an init script (e.g. `npm run db:init`) that creates `data/movies.db` (or `db/movies.db`), runs schema, then runs seed. Document in backend README. | "Add a script that creates the SQLite DB, applies schema.sql, and seeds it." |
+| [ ] | **1.1** Scaffold Vue 3 app with Vite at project root (or in a single `frontend/` folder). Use Composition API. | "Create a new Vue 3 + Vite project here (or in ./frontend) using npm create vite." |
+| [ ] | **1.2** Add Vue Router; define routes `/` (movie list) and `/movies/:id` (movie detail). | "Add Vue Router with two routes: home and /movies/:id." |
+| [ ] | **1.3** Add sample data: create `public/data/movies.json` and `public/data/reviews.json` with the PRD sample (Inception, Shawshank, Parasite + a few reviews). | "Create public/data/movies.json and reviews.json matching PRD section 7." |
+| [ ] | **1.4** Create a **data/store layer**: on app init, read `localStorage.getItem('movies')` and `localStorage.getItem('reviews')`. If missing or empty, fetch the JSON from `public/data/`, then write to localStorage and use that; otherwise use what’s in localStorage. Expose reactive state (e.g. refs or a simple store) for movies and reviews. | "Add a store or composable that seeds localStorage from public/data/*.json when empty and exposes movies and reviews reactively." |
 
 ---
 
-## Phase 2: Backend API
+## Phase 2: Pages & Data Binding
 
 | Done | Task | Notes / AI prompt hint |
 |------|------|------------------------|
-| [ ] | **2.1** Implement `GET /api/movies` — return all movies as JSON. Use SQLite in the backend. | "Implement GET /api/movies that reads from SQLite and returns JSON." |
-| [ ] | **2.2** Implement `GET /api/movies/:id` — return one movie by id or 404. | "Add GET /api/movies/:id with 404 when not found." |
-| [ ] | **2.3** Implement `GET /api/movies/:id/reviews` — return all reviews for that movie. | "Add GET /api/movies/:id/reviews." |
-| [ ] | **2.4** Implement `POST /api/movies/:id/reviews` — body: author_name (optional), rating (1–5), text. Validate rating and non-empty text; insert into SQLite; return created review (with id, created_at). | "Add POST /api/movies/:id/reviews with validation and SQLite insert." |
-| [ ] | **2.5** Enable CORS for the frontend origin (e.g. http://localhost:5173) so the Vue app can call the API. | "Enable CORS in the backend for the Vite dev server origin." |
-| [ ] | **2.6** (Optional) Add query params to `GET /api/movies`: e.g. `?search=...&genre=...&year=...` and filter in SQL. | "Add optional search/genre/year filters to GET /api/movies." |
+| [ ] | **2.1** Build the **movie list page**: read movies from the store (localStorage-backed), display title, year, poster (or placeholder), link each to `/movies/:id`. | "On the home route, show a list of movies from the store with links to detail." |
+| [ ] | **2.2** Build the **movie detail page**: get movie by id from store; get reviews for that movie (filter by `movieId`). Show title, year, genres, description, poster, duration and list of reviews (author, rating, text, date). | "On /movies/:id, show full movie info and list of reviews from the store." |
+| [ ] | **2.3** Handle **movie not found**: when `id` doesn’t match any movie, show a simple “Not found” message or redirect. | "Handle 404 when movie id is invalid on the detail page." |
+| [ ] | **2.4** Add **Leave a review** form on movie detail: author name (optional), rating (1–5), review text. On submit: validate (rating 1–5, non-empty text), generate id and `createdAt`, append to reviews array, save to localStorage, update store state so the new review appears in the list. | "Add review form that saves to localStorage and updates the store and UI." |
 
 ---
 
-## Phase 3: Frontend — Data & Pages
+## Phase 3: Validation & Styling
 
 | Done | Task | Notes / AI prompt hint |
 |------|------|------------------------|
-| [ ] | **3.1** Create a simple API client (e.g. axios or fetch) with base URL pointing to the backend (configurable, e.g. env). | "Add an API client in the Vue app for the backend base URL." |
-| [ ] | **3.2** Build the **movie list page**: fetch `GET /api/movies`, display title, year, poster (or placeholder), link to `/movies/:id`. | "On the home route, fetch movies and show a list with links to detail." |
-| [ ] | **3.3** Build the **movie detail page**: fetch movie by id and its reviews; show title, year, genres, description, poster, duration; show list of reviews (author, rating, text, date). | "On /movies/:id, fetch movie and reviews and display full detail and review list." |
-| [ ] | **3.4** Add **Leave a review** form on the movie detail page: author name (optional), rating (1–5), review text. On submit, call `POST /api/movies/:id/reviews`, then refresh reviews list or append the new review. | "Add review form that POSTs to the API and updates the review list." |
-| [ ] | **3.5** Handle loading and error states (e.g. movie not found, network error) on list and detail pages. | "Add loading and error handling for movie list and detail." |
+| [ ] | **3.1** Add **client-side validation** on the review form: rating required (1–5), review text required and non-empty. Show inline or summary errors. | "Add form validation for rating and review text on the review form." |
+| [ ] | **3.2** Apply **basic styling**: readable layout, movie cards on list, clear detail layout, styled form. Use CSS/SCSS or Tailwind per PRD. | "Style the movie list, detail page, and review form for a clean layout." |
+| [ ] | **3.3** (Optional) Add **search or filter** on the movie list (by title, genre, year) in the frontend only. | "Add search/filter UI for the movie list using the existing movies array." |
 
 ---
 
-## Phase 4: Form Validation & Styling
+## Phase 4: Polish & Documentation
 
 | Done | Task | Notes / AI prompt hint |
 |------|------|------------------------|
-| [ ] | **4.1** Add client-side validation: rating required (1–5), review text required and non-empty. Show inline or summary errors. | "Add form validation for rating and review text on the review form." |
-| [ ] | **4.2** Apply basic styling: readable layout, movie cards on list, clear detail layout, styled form. Use CSS/SCSS or Tailwind per PRD. | "Style the movie list, detail page, and review form for a clean layout." |
-| [ ] | **4.3** (Optional) Add search or filter on the movie list page (by title, genre, year) using backend filters if implemented in 2.6. | "Add search/filter UI that uses the movies API query params." |
+| [ ] | **4.1** On movie detail, **compute and display average rating** from reviews (e.g. "4.2 based on 3 reviews"). | "Show average rating and count from reviews on the movie detail page." |
+| [ ] | **4.2** Add **loading state** when reading from localStorage/seed (if async); optional **error state** if seed fetch fails. | "Add loading (and error) handling for initial data load." |
+| [ ] | **4.3** Write a short **README**: how to install dependencies, run dev server, and open the app. Mention that data is in localStorage and seeded from `public/data/*.json`. | "Write README with setup and run instructions (frontend only, localStorage)." |
+| [ ] | **4.4** Smoke-test: list → detail → submit review → see new review and updated average. Fix any bugs. | Manual check; use "Test the full flow and fix [issue]." if needed. |
 
 ---
 
-## Phase 5: Polish & Documentation
+## Quick Reference: Data (localStorage)
 
-| Done | Task | Notes / AI prompt hint |
-|------|------|------------------------|
-| [ ] | **5.1** On movie detail, compute and display **average rating** from reviews (e.g. "4.2 based on 3 reviews"). | "Show average rating and count from reviews on the movie detail page." |
-| [ ] | **5.2** Write a short **README** at project root: how to install dependencies (frontend + backend), run DB init, start backend, start frontend, and open the app. | "Write README with setup and run instructions for frontend and backend." |
-| [ ] | **5.3** Smoke-test full flow: list → detail → submit review → see new review and updated average. Fix any bugs. | Manual check; use "Test the full flow and fix [specific issue]." if needed. |
+| Key       | Content                          |
+|-----------|-----------------------------------|
+| `movies`  | JSON array of movie objects       |
+| `reviews` | JSON array of review objects      |
 
----
-
-## Quick Reference: API Contract
-
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| GET | `/api/movies` | List all movies (optional: ?search=&genre=&year=) |
-| GET | `/api/movies/:id` | One movie |
-| GET | `/api/movies/:id/reviews` | Reviews for movie |
-| POST | `/api/movies/:id/reviews` | Body: `{ author_name?, rating, text }` |
+- **Seed:** If either key is missing/empty, load from `public/data/movies.json` and `public/data/reviews.json` (or embedded default), then write to localStorage.
+- **Movie shape:** `id`, `title`, `year`, `genres`, `description`, `posterUrl`, `duration`.
+- **Review shape:** `id`, `movieId`, `authorName`, `rating`, `text`, `createdAt`.
 
 ---
 
 ## Done Checklist (from PRD)
 
-- [ ] Vue app loads and displays movie list from the API (SQLite-backed).
+- [ ] Vue app loads and displays movie list from localStorage (seeded from sample JSON if empty).
 - [ ] Movie detail page shows all main movie fields and poster.
 - [ ] Movie detail page lists all reviews for that movie.
-- [ ] User can submit a new review; it is saved in SQLite and appears in the list.
-- [ ] Schema and seed are provided and documented.
+- [ ] User can submit a new review; it is saved to localStorage and appears in the list.
+- [ ] Sample `movies.json` and `reviews.json` are provided for seeding; app seeds localStorage on first run.
