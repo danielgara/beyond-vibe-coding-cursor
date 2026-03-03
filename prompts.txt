@@ -1,3 +1,5 @@
+OPENED NEW AGENT
+
 1) create a prd file in a md file for a movies review site, in which users can see main movie information, and leave reviews. this must be done with vue.js and a sample database as json.
 
 2) modify the prd file to use sqlite as the database
@@ -5,3 +7,7 @@
 3) take the prd file, and create a to-do list md file for implementing this project. the goal is to work on small manageable increments to do it with assisted ai, development
 
 4) do all the project in just the frontend, edit the pdr and todo files, and use localstorage for bd
+
+OPENED NEW AGENT
+
+5) @TODO-implementation.md build this
