@@ -11,3 +11,9 @@ OPENED NEW AGENT
 OPENED NEW AGENT
 
 5) @TODO-implementation.md build this
+
+6) add ci pipeline to the todo
+
+7) implement ci pipeline
+
+8) add lint to the frontend project and add it to the workflow

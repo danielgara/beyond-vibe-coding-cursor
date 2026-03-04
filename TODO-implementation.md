@@ -58,6 +58,14 @@
 
 ---
 
+## Phase 5: CI Pipeline
+
+| Done | Task | Notes / AI prompt hint |
+|------|------|------------------------|
+| [x] | **5.1** Add a **CI pipeline** (e.g. GitHub Actions) that installs dependencies, runs lint (if configured), and runs `npm run build` in the frontend app. Ensure the workflow runs on push and pull request. | "Add GitHub Actions workflow for the frontend: install, lint, build in frontend/." |
+
+---
+
 ## Quick Reference: Data (localStorage)
 
 | Key       | Content                          |
