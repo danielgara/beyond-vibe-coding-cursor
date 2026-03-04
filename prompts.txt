@@ -17,3 +17,7 @@ OPENED NEW AGENT
 7) implement ci pipeline
 
 8) add lint to the frontend project and add it to the workflow
+
+9) add unit tests to the todo file
+
+10) implement phase 6

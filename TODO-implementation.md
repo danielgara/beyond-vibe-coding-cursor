@@ -66,6 +66,17 @@
 
 ---
 
+## Phase 6: Unit Tests
+
+| Done | Task | Notes / AI prompt hint |
+|------|------|------------------------|
+| [x] | **6.1** Add a **test runner** to the frontend (e.g. Vitest with Vue Test Utils). Add `npm run test` script. | "Add Vitest and @vue/test-utils to the frontend; add a test script." |
+| [x] | **6.2** Write **unit tests for the store/composable**: test that `getMovieById`, `getReviewsByMovieId`, and `addReview` behave correctly (mock or reset localStorage as needed). | "Write Vitest tests for useMovieStore: getMovieById, getReviewsByMovieId, addReview." |
+| [x] | **6.3** Write **unit tests for key views**: e.g. MovieList shows movies and links; MovieDetail shows movie info and reviews, and the review form submits and updates the list. | "Write component tests for MovieList and MovieDetail with Vue Test Utils." |
+| [x] | **6.4** Add **test step to CI**: run `npm run test` in the frontend in the GitHub Actions workflow (after lint, before or with build). | "Add npm run test to the frontend CI workflow." |
+
+---
+
 ## Quick Reference: Data (localStorage)
 
 | Key       | Content                          |
