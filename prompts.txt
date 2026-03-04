@@ -21,3 +21,5 @@ OPENED NEW AGENT
 9) add unit tests to the todo file
 
 10) implement phase 6
+
+11) update frontend project readme with new available commands, do it in a new branch, and later open a pr
