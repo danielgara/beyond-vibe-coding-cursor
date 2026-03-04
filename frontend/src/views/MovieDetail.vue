@@ -72,15 +72,40 @@ function goBack() {
 
 <template>
   <div class="movie-detail-page">
-    <div v-if="loading" class="loading">Loading…</div>
-    <div v-else-if="loadError" class="error">{{ loadError }}</div>
-    <div v-else-if="!movie" class="not-found-inline">
+    <div
+      v-if="loading"
+      class="loading"
+    >
+      Loading…
+    </div>
+    <div
+      v-else-if="loadError"
+      class="error"
+    >
+      {{ loadError }}
+    </div>
+    <div
+      v-else-if="!movie"
+      class="not-found-inline"
+    >
       <h2>Movie not found</h2>
       <p>No movie exists with this ID.</p>
-      <button type="button" class="back-btn" @click="goBack">Back to list</button>
+      <button
+        type="button"
+        class="back-btn"
+        @click="goBack"
+      >
+        Back to list
+      </button>
     </div>
     <template v-else-if="movie">
-      <button type="button" class="back-btn" @click="goBack">← Back to list</button>
+      <button
+        type="button"
+        class="back-btn"
+        @click="goBack"
+      >
+        ← Back to list
+      </button>
 
       <article class="movie-article">
         <div class="movie-hero">
@@ -90,41 +115,75 @@ function goBack() {
               :src="movie.posterUrl"
               :alt="movie.title"
               class="poster"
-            />
-            <div v-else class="poster placeholder">No poster</div>
+            >
+            <div
+              v-else
+              class="poster placeholder"
+            >
+              No poster
+            </div>
           </div>
           <div class="movie-info">
-            <h1 class="title">{{ movie.title }}</h1>
+            <h1 class="title">
+              {{ movie.title }}
+            </h1>
             <p class="meta">
               {{ movie.year }}
               <span v-if="movie.duration"> · {{ movie.duration }} min</span>
               <span v-if="movie.genres?.length"> · {{ movie.genres.join(', ') }}</span>
             </p>
-            <p v-if="averageRating" class="avg-rating">
+            <p
+              v-if="averageRating"
+              class="avg-rating"
+            >
               {{ averageRating }} based on {{ movieReviews.length }} review{{ movieReviews.length === 1 ? '' : 's' }}
             </p>
-            <p class="description">{{ movie.description }}</p>
+            <p class="description">
+              {{ movie.description }}
+            </p>
           </div>
         </div>
 
         <section class="reviews-section">
           <h2>Reviews</h2>
-          <ul v-if="movieReviews.length" class="reviews-list">
-            <li v-for="r in movieReviews" :key="r.id" class="review-card">
+          <ul
+            v-if="movieReviews.length"
+            class="reviews-list"
+          >
+            <li
+              v-for="r in movieReviews"
+              :key="r.id"
+              class="review-card"
+            >
               <div class="review-meta">
                 <span class="author">{{ r.authorName || 'Anonymous' }}</span>
                 <span class="rating">★ {{ r.rating }}/5</span>
                 <span class="date">{{ formatDate(r.createdAt) }}</span>
               </div>
-              <p class="review-text">{{ r.text }}</p>
+              <p class="review-text">
+                {{ r.text }}
+              </p>
             </li>
           </ul>
-          <p v-else class="no-reviews">No reviews yet. Be the first!</p>
+          <p
+            v-else
+            class="no-reviews"
+          >
+            No reviews yet. Be the first!
+          </p>
 
           <div class="review-form-wrap">
             <h3>Leave a review</h3>
-            <p v-if="submitted" class="success-msg">Thanks! Your review has been added.</p>
-            <form class="review-form" @submit.prevent="submitReview">
+            <p
+              v-if="submitted"
+              class="success-msg"
+            >
+              Thanks! Your review has been added.
+            </p>
+            <form
+              class="review-form"
+              @submit.prevent="submitReview"
+            >
               <div class="form-row">
                 <label for="author">Your name (optional)</label>
                 <input
@@ -133,7 +192,7 @@ function goBack() {
                   type="text"
                   placeholder="Anonymous"
                   class="form-input"
-                />
+                >
               </div>
               <div class="form-row">
                 <label for="rating">Rating (1–5) *</label>
@@ -143,10 +202,21 @@ function goBack() {
                   class="form-select"
                   :class="{ invalid: errors.rating }"
                 >
-                  <option value="">Choose…</option>
-                  <option v-for="n in 5" :key="n" :value="n">{{ n }} ★</option>
+                  <option value="">
+                    Choose…
+                  </option>
+                  <option
+                    v-for="n in 5"
+                    :key="n"
+                    :value="n"
+                  >
+                    {{ n }} ★
+                  </option>
                 </select>
-                <span v-if="errors.rating" class="field-error">{{ errors.rating }}</span>
+                <span
+                  v-if="errors.rating"
+                  class="field-error"
+                >{{ errors.rating }}</span>
               </div>
               <div class="form-row">
                 <label for="text">Review *</label>
@@ -158,9 +228,17 @@ function goBack() {
                   class="form-input"
                   :class="{ invalid: errors.text }"
                 />
-                <span v-if="errors.text" class="field-error">{{ errors.text }}</span>
+                <span
+                  v-if="errors.text"
+                  class="field-error"
+                >{{ errors.text }}</span>
               </div>
-              <button type="submit" class="submit-btn">Submit review</button>
+              <button
+                type="submit"
+                class="submit-btn"
+              >
+                Submit review
+              </button>
             </form>
           </div>
         </section>

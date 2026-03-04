@@ -45,11 +45,23 @@ function goToMovie(id) {
   <div class="movie-list-page">
     <header class="page-header">
       <h1>Movies Review</h1>
-      <p class="tagline">Browse and review your favorite films</p>
+      <p class="tagline">
+        Browse and review your favorite films
+      </p>
     </header>
 
-    <div v-if="loading" class="loading">Loading…</div>
-    <div v-else-if="loadError" class="error">{{ loadError }}</div>
+    <div
+      v-if="loading"
+      class="loading"
+    >
+      Loading…
+    </div>
+    <div
+      v-else-if="loadError"
+      class="error"
+    >
+      {{ loadError }}
+    </div>
     <template v-else>
       <div class="filters">
         <input
@@ -57,10 +69,21 @@ function goToMovie(id) {
           type="search"
           placeholder="Search by title or description…"
           class="filter-input"
-        />
-        <select v-model="filterGenre" class="filter-select">
-          <option value="">All genres</option>
-          <option v-for="g in genres" :key="g" :value="g">{{ g }}</option>
+        >
+        <select
+          v-model="filterGenre"
+          class="filter-select"
+        >
+          <option value="">
+            All genres
+          </option>
+          <option
+            v-for="g in genres"
+            :key="g"
+            :value="g"
+          >
+            {{ g }}
+          </option>
         </select>
         <input
           v-model="filterYear"
@@ -69,7 +92,7 @@ function goToMovie(id) {
           min="1900"
           max="2030"
           class="filter-input filter-year"
-        />
+        >
       </div>
 
       <ul class="movie-grid">
@@ -86,16 +109,30 @@ function goToMovie(id) {
               :alt="movie.title"
               class="poster"
               loading="lazy"
-            />
-            <div v-else class="poster placeholder">No poster</div>
+            >
+            <div
+              v-else
+              class="poster placeholder"
+            >
+              No poster
+            </div>
           </div>
           <div class="card-body">
-            <h2 class="movie-title">{{ movie.title }}</h2>
-            <p class="meta">{{ movie.year }} · {{ (movie.genres || []).join(', ') }}</p>
+            <h2 class="movie-title">
+              {{ movie.title }}
+            </h2>
+            <p class="meta">
+              {{ movie.year }} · {{ (movie.genres || []).join(', ') }}
+            </p>
           </div>
         </li>
       </ul>
-      <p v-if="filteredMovies.length === 0" class="empty">No movies match your filters.</p>
+      <p
+        v-if="filteredMovies.length === 0"
+        class="empty"
+      >
+        No movies match your filters.
+      </p>
     </template>
   </div>
 </template>

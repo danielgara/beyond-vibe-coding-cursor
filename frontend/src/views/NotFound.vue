@@ -8,7 +8,12 @@ const router = useRouter()
   <div class="not-found">
     <h1>Movie not found</h1>
     <p>We couldn't find a movie with that ID.</p>
-    <router-link to="/" class="home-link">Back to movie list</router-link>
+    <router-link
+      to="/"
+      class="home-link"
+    >
+      Back to movie list
+    </router-link>
   </div>
 </template>
 
