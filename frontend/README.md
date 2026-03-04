@@ -18,6 +18,18 @@ A Vue 3 single-page app for browsing movies and submitting reviews. **Frontend o
 
 3. Open the URL shown in the terminal (e.g. `http://localhost:5173`) in your browser.
 
+## Available commands
+
+| Command | Description |
+|--------|-------------|
+| `npm run dev` | Start the Vite dev server |
+| `npm run build` | Build for production (output in `dist/`) |
+| `npm run preview` | Serve the production build locally |
+| `npm run lint` | Run ESLint (fails on warnings) |
+| `npm run lint:fix` | Run ESLint and fix what can be auto-fixed |
+| `npm run test` | Run unit tests once (Vitest) |
+| `npm run test:watch` | Run unit tests in watch mode |
+
 ## Data
 
 - **Storage:** Movies and reviews are kept in `localStorage` under the keys `movies` and `reviews`.
