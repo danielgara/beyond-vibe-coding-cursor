@@ -1,0 +1,55 @@
+---
+description: Consistent format for git commit messages in this project
+alwaysApply: true
+---
+
+# Git Commit Message Format
+
+Use **Conventional Commits** for all commit messages so history stays clear and tooling (changelogs, semver) can use them.
+
+## Format
+
+```
+<type>(<scope>): <subject>
+
+[optional body]
+
+[optional footer]
+```
+
+- **Subject**: One line, imperative mood, ~50 characters or less. No period at the end.
+- **Body** (optional): Wrap at 72 characters. Explain *what* and *why*, not *how*.
+- **Footer** (optional): e.g. `Fixes #123`, `BREAKING CHANGE:`.
+
+## Types
+
+| Type     | Use for |
+|----------|---------|
+| `feat`   | New feature |
+| `fix`    | Bug fix |
+| `docs`   | Documentation only |
+| `style`  | Formatting, missing semicolons, etc. (no code change) |
+| `refactor` | Code change that neither fixes a bug nor adds a feature |
+| `test`   | Adding or updating tests |
+| `chore`  | Build, tooling, dependencies, config |
+
+## Scope (optional)
+
+Short noun for the area: `frontend`, `api`, `auth`, `deps`, etc. Omit if unclear.
+
+## Examples
+
+```bash
+# Good
+feat(frontend): add movie detail page with reviews
+fix: correct localStorage key for movies seed
+docs: update README with run instructions
+chore(deps): bump vite to 5.2.0
+
+# Avoid
+Fixed stuff
+WIP
+updated code
+```
+
+When suggesting or writing commit messages, use this format.

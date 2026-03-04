@@ -23,3 +23,5 @@ OPENED NEW AGENT
 10) implement phase 6
 
 11) update frontend project readme with new available commands, do it in a new branch, and later open a pr
+
+12) addd git rules to this project about a consistent format to git commit messages
